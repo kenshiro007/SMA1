@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>apache.felix.bndl</groupId>
+  <artifactId>Felix_Bundle</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  
+  <dependencies>
+  	
+  	<dependency>
+	    <groupId>org.osgi</groupId>
+	    <artifactId>org.osgi.core</artifactId>
+	    <version>5.0.0</version>
+	</dependency>
+    
+  </dependencies>
+  
+  <build>
+  	<plugins>
+	  <plugin>
+	    <groupId>org.apache.felix</groupId> 
+	    <artifactId>maven-bundle-plugin</artifactId> 
+	    <extensions>true</extensions>
+	    <configuration>
+	      <instructions>
+	        <Export-Package>formation.felix.tut1.api</Export-Package>
+	        <Private-Package>formation.felix.tut1.*</Private-Package>
+	        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+	        <Bundle-Activator>formation.felix.tut1.Activator</Bundle-Activator>
+	        <Export-Service>org.osgi.service.log.LogService,org.osgi.service.log.LogReaderService</Export-Service>
+	      </instructions>
+	    </configuration>
+	  </plugin>
+  	</plugins>
+  </build>
+  
+</project>
