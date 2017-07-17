@@ -7,20 +7,22 @@ import jade.core.behaviours.ParallelBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import sma.commerce.containers.AcheteurContainer;
 import sma.commerce.containers.ConsumerContainer;
 
-public class ConsumerAgent extends GuiAgent {
+public class AcheteurAgent extends GuiAgent {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private ConsumerContainer gui;
+	private AcheteurContainer gui;
 	@Override
 	protected void setup() {
-		gui = (ConsumerContainer) getArguments()[0];
-		gui.setConsumerAgent(this);
+		gui = (AcheteurContainer) getArguments()[0];
+		gui.setAcheteurAgent(this);
 		
 		ParallelBehaviour parallelBehaviour = new ParallelBehaviour();
 		addBehaviour(parallelBehaviour);
@@ -28,7 +30,8 @@ public class ConsumerAgent extends GuiAgent {
 		
 			@Override
 			public void action() {
-				ACLMessage aclMessage = receive();
+				MessageTemplate messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+				ACLMessage aclMessage = receive(messageTemplate);
 				if(aclMessage!=null){
 					GuiEvent guiEvent = new GuiEvent(this, 1);
 					guiEvent.addParameter(aclMessage.getContent());
@@ -39,13 +42,6 @@ public class ConsumerAgent extends GuiAgent {
 		});
 	}
 	@Override
-	public void onGuiEvent(GuiEvent ev) {
-		if(ev.getType()==1){
-			ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
-			String book = ev.getParameter(0).toString();
-			aclMessage.setContent(book);
-			aclMessage.addReceiver(new AID("ACHT1",AID.ISLOCALNAME));
-			send(aclMessage);
-		}		
+	public void onGuiEvent(GuiEvent ev) {		
 	}
 }

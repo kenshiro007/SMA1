@@ -1,9 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>sma.commerce</groupId>
   <artifactId>SMA1-Project</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
+  <properties>
+  	<maven.compiler.source>1.8</maven.compiler.source>
+  	<maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
   <dependencies>
   	<dependency>
     	<groupId>net.sf.ingenias</groupId>
@@ -11,4 +15,64 @@
     	<version>4.3</version>
 	</dependency>
   </dependencies>
+  <build>
+  	<directory>target\classes</directory>
+  	<plugins>   
+        <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-shade-plugin</artifactId>
+			  <version>2.4.1</version>
+			  <executions>
+			  	<!-- Build Main Container -->
+			    <execution>
+			      <id>build-main-container</id>
+			      <phase>package</phase>
+			      <goals>
+			         <goal>shade</goal>
+			      </goals>   
+			      <configuration>
+			        <transformers>
+			          <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">                        
+			            <mainClass>sma.commerce.containers.MainContainer</mainClass>
+			          </transformer>
+			        </transformers>
+			        <finalName>MainContainer</finalName>
+			      </configuration>        
+			    </execution>
+			    <!-- Build Consumer Container -->
+			    <execution>
+			      <id>build-consumer_container</id>
+			      <phase>package</phase>
+			      <goals>
+			         <goal>shade</goal>
+			      </goals>   
+			      <configuration>
+			        <transformers>
+			          <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">                        
+			            <mainClass>sma.commerce.containers.ConsumerContainer</mainClass>
+			          </transformer>
+			        </transformers>
+			        <finalName>ConsumerAgent</finalName>
+			      </configuration>  
+			    </execution>
+			    <!-- Build Acheteur Container -->
+			    <execution>
+			      <id>build-acheteur_container</id>
+			      <phase>package</phase>
+			      <goals>
+			         <goal>shade</goal>
+			      </goals>   
+			      <configuration>
+			        <transformers>
+			          <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">                        
+			            <mainClass>sma.commerce.containers.ConsumerContainer</mainClass>
+			          </transformer>
+			        </transformers>
+			        <finalName>AcheteurAgent</finalName>
+			      </configuration>  
+			    </execution>	    
+			</executions>
+		</plugin>
+  	</plugins>
+  </build>
 </project>

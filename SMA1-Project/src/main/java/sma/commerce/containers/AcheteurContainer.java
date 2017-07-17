@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -21,13 +22,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import sma.commerce.agents.AcheteurAgent;
 import sma.commerce.agents.ConsumerAgent;
 
-public class ConsumerContainer extends Application {
+public class AcheteurContainer extends Application {
 
-	private ConsumerAgent consumerAgent;
+	private AcheteurAgent acheteurAgent;
 	public static void main(String[] args) {
-		launch(ConsumerContainer.class);
+		launch(AcheteurContainer.class);
 	}
 
 	final ObservableList<String> observableList = FXCollections.observableArrayList();
@@ -40,7 +42,7 @@ public class ConsumerContainer extends Application {
 			profileImpl.setParameter(ProfileImpl.MAIN_HOST, "10.188.165.76");
 			AgentContainer consumerContainer = runtime.createAgentContainer(profileImpl);
 			System.out.println("cons agent name "+ConsumerAgent.class.getName());
-			AgentController agentController = consumerContainer.createNewAgent("consumerAgent", ConsumerAgent.class.getName(), new Object[]{this});
+			AgentController agentController = consumerContainer.createNewAgent("ACHT1", AcheteurAgent.class.getName(), new Object[]{this});
 			agentController.activate();
 			agentController.start();
 			consumerContainer.start();
@@ -52,15 +54,9 @@ public class ConsumerContainer extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		startContainer();
-		primaryStage.setTitle("Consommateur");
+		primaryStage.setTitle("Acheteur");
 		HBox hBox = new HBox();
 		hBox.setPadding(new Insets(10));
-		Label label_book = new Label("book ");
-		final TextField textField_book = new TextField();
-		Button button_by = new Button("Send");
-		hBox.getChildren().add(label_book);
-		hBox.getChildren().add(textField_book);
-		hBox.getChildren().add(button_by);
 		BorderPane borderPane = new BorderPane();
 		borderPane.setTop(hBox);
 		
@@ -75,31 +71,17 @@ public class ConsumerContainer extends Application {
 		
 		Scene scene = new Scene(borderPane,400,500);
 		primaryStage.setScene(scene);
-		
-		button_by.setOnAction(new EventHandler<ActionEvent>() {
-			
-			public void handle(ActionEvent event) {
-				String book = textField_book.getText();
-				GuiEvent guiEvent = new GuiEvent(this, 1);
-				guiEvent.addParameter(book);
-				consumerAgent.onGuiEvent(guiEvent);
-				//observableList.add(book);
-				
-			}
-		});
 		primaryStage.show();
 		
 		
 	}
-
-	public ConsumerAgent getConsumerAgent() {
-		return consumerAgent;
-	}
-
-	public void setConsumerAgent(ConsumerAgent consumerAgent) {
-		this.consumerAgent = consumerAgent;
-	}
 	
+	public AcheteurAgent getAcheteurAgent() {
+		return acheteurAgent;
+	}
+	public void setAcheteurAgent(AcheteurAgent acheteurAgent) {
+		this.acheteurAgent = acheteurAgent;
+	}
 	public void viewMessage(GuiEvent ev){
 		String msg = ev.getParameter(0).toString();
 		observableList.add(msg);

@@ -5,6 +5,7 @@ import jade.core.Runtime;
 import jade.gui.GuiEvent;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,45 +23,46 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import sma.commerce.agents.ConsumerAgent;
+import sma.commerce.agents.VendeurAgent;
 
-public class ConsumerContainer extends Application {
+public class VendeurContainer extends Application {
 
-	private ConsumerAgent consumerAgent;
-	public static void main(String[] args) {
-		launch(ConsumerContainer.class);
-	}
-
+	private VendeurAgent vendeurAgent;
 	final ObservableList<String> observableList = FXCollections.observableArrayList();
 	ListView<String> listView = new ListView<String>(observableList);
+	AgentContainer consumerContainer;
 	
+	public static void main(String[] args) {
+		launch(VendeurContainer.class);
+	}
+
 	public void startContainer (){
 		try{
 			Runtime runtime = Runtime.instance();
 			ProfileImpl profileImpl = new ProfileImpl(false);
 			profileImpl.setParameter(ProfileImpl.MAIN_HOST, "10.188.165.76");
-			AgentContainer consumerContainer = runtime.createAgentContainer(profileImpl);
+			consumerContainer = runtime.createAgentContainer(profileImpl);
 			System.out.println("cons agent name "+ConsumerAgent.class.getName());
-			AgentController agentController = consumerContainer.createNewAgent("consumerAgent", ConsumerAgent.class.getName(), new Object[]{this});
-			agentController.activate();
-			agentController.start();
 			consumerContainer.start();
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		startContainer();
-		primaryStage.setTitle("Consommateur");
+		primaryStage.setTitle("Vendeur");
+		Label label_vendeur = new Label("vendeur ");
+		final TextField textField_vendeur = new TextField();
+		Button button_vendeur = new Button("Validate");
+		
 		HBox hBox = new HBox();
+		hBox.getChildren().add(label_vendeur);
+		hBox.getChildren().add(textField_vendeur);
+		hBox.getChildren().add(label_vendeur);
 		hBox.setPadding(new Insets(10));
-		Label label_book = new Label("book ");
-		final TextField textField_book = new TextField();
-		Button button_by = new Button("Send");
-		hBox.getChildren().add(label_book);
-		hBox.getChildren().add(textField_book);
-		hBox.getChildren().add(button_by);
 		BorderPane borderPane = new BorderPane();
 		borderPane.setTop(hBox);
 		
@@ -75,31 +77,31 @@ public class ConsumerContainer extends Application {
 		
 		Scene scene = new Scene(borderPane,400,500);
 		primaryStage.setScene(scene);
-		
-		button_by.setOnAction(new EventHandler<ActionEvent>() {
-			
-			public void handle(ActionEvent event) {
-				String book = textField_book.getText();
-				GuiEvent guiEvent = new GuiEvent(this, 1);
-				guiEvent.addParameter(book);
-				consumerAgent.onGuiEvent(guiEvent);
-				//observableList.add(book);
-				
-			}
-		});
 		primaryStage.show();
 		
-		
+		button_vendeur.setOnAction(new EventHandler<ActionEvent>() {
+			
+			public void handle(ActionEvent event) {
+				String vendeur_name = textField_vendeur.getText();
+				
+				try {
+					AgentController agentController = consumerContainer.createNewAgent("VEND1", VendeurAgent.class.getName(), new Object[]{this});
+					agentController.activate();
+					agentController.start();
+				} catch (StaleProxyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
-	public ConsumerAgent getConsumerAgent() {
-		return consumerAgent;
+	public VendeurAgent getVendeurAgent() {
+		return vendeurAgent;
 	}
-
-	public void setConsumerAgent(ConsumerAgent consumerAgent) {
-		this.consumerAgent = consumerAgent;
+	public void setVendeurAgent(VendeurAgent vendeurAgent) {
+		this.vendeurAgent = vendeurAgent;
 	}
-	
 	public void viewMessage(GuiEvent ev){
 		String msg = ev.getParameter(0).toString();
 		observableList.add(msg);
